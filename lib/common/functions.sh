@@ -682,7 +682,7 @@ installPackages() {
         [[ $osid == 2 && -z $dhcpd && $x == +(*'dhcp'*) ]] && dhcpd=$x
         eval $packageQuery >>$workingdir/error_logs/fog_error_${version}.log 2>&1
         if [[ $? -eq 0 ]]; then
-            dots "Skipping package: $x"
+            dots "Skipping package:   $x"
             echo "(Already Installed)"
             newPackList="$newPackList $x"
             continue
@@ -1624,13 +1624,13 @@ configureHttpd() {
     [[ -n $snmysqlhost ]] && options="$options -h$snmysqlhost"
     [[ -n $snmysqluser ]] && options="$options -u'$snmysqluser'"
     [[ -n $snmysqlpass ]] && options="$options -p'$snmysqlpass'"
+    sql="UPDATE mysql.user SET plugin='mysql_native_password' WHERE User='root';"
+    mysql ${options} -e "$sql" >>$workingdir/error_logs/fog_error_${version}.log 2>&1
     mysqlver=$(mysql -V |  sed -n 's/.*Distrib[ ]\(\([0-9]\([.]\|\)\)*\).*\([-]\|\)[,].*/\1/p')
     mariadb=$(mysql -V |  sed -n 's/.*Distrib[ ].*[-]\(.*\)[,].*/\1/p')
     vertocheck="5.7"
-    if [[ -n $mariadb ]]; then
-        mysqlver=$(mysql -V | sed -n 's/.*Ver[ ]\(.*\)[ ].*Distrib.*/\1/p')
-        vertocheck="10.2"
-    fi
+    [[ -n $mariadb ]] && vertocheck="10.2"
+    configureMySql
     mysqlver=$(echo $mysqlver | awk -F'([.])' '{print $1"."$2}')
     runTest=$(echo "$mysqlver < $vertocheck" | bc)
     if [[ $runTest -eq 0 ]]; then
@@ -1638,12 +1638,16 @@ configureHttpd() {
         [[ -z $snmysqluser ]] && snmysqluser='root'
         case $snmysqlhost in
             127.0.0.1|[Ll][Oo][Cc][Aa][Ll][Hh][Oo][Ss][Tt])
+                sql="UPDATE mysql.user SET plugin='mysql_native_password' WHERE User='root';"
+                mysql ${options} -e "$sql" >>$workingdir/error_logs/fog_error_${version}.log 2>&1
                 sql="ALTER USER '$snmysqluser'@'127.0.0.1' IDENTIFIED WITH mysql_native_password BY '$snmysqlpass';"
                 mysql ${options} -e "$sql" >>$workingdir/error_logs/fog_error_${version}.log 2>&1
                 sql="ALTER USER '$snmysqluser'@'localhost' IDENTIFIED WITH mysql_native_password BY '$snmysqlpass';"
                 mysql ${options} -e "$sql" >>$workingdir/error_logs/fog_error_${version}.log 2>&1
                 ;;
             *)
+                sql="UPDATE mysql.user SET plugin='mysql_native_password' WHERE User='root';"
+                mysql ${options} -e "$sql" >>$workingdir/error_logs/fog_error_${version}.log 2>&1
                 sql="ALTER USER '$snmysqluser'@'$snmysqlhost' IDENTIFIED WITH mysql_native_password BY '$snmysqlpass';"
                 mysql ${options} -e "$sql" >>$workingdir/error_logs/fog_error_${version}.log 2>&1
                 ;;
@@ -1941,13 +1945,8 @@ class Config
     chmod +rx $apacheacclog
     chown -R ${apacheuser}:${apacheuser} $webdirdest
     errorStat $?
-    rm -f "$webdirdest/mobile/css/font-awesome.css" $webdirdest/mobile/{fonts,less,scss} &>>$workingdir/error_logs/fog_error_${version}.log 2>&1
     [[ -d /var/www/html/ && ! -e /var/www/html/fog/ ]] && ln -s "$webdirdest" /var/www/html/
     [[ -d /var/www/ && ! -e /var/www/fog ]] && ln -s "$webdirdest" /var/www/
-    ln -s "$webdirdest/management/css/font-awesome.css" "$webdirdest/mobile/css/font-awesome.css"
-    ln -s "$webdirdest/management/fonts" "$webdirdest/mobile/"
-    ln -s "$webdirdest/management/less" "$webdirdest/mobile/"
-    ln -s "$webdirdest/management/scss" "$webdirdest/mobile/"
     chown -R ${apacheuser}:${apacheuser} "$webdirdest"
 }
 downloadfiles() {

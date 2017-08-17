@@ -120,7 +120,7 @@ abstract class Event extends FOGBase
             self::niceDate()->format('Y-m-d H:i:s'),
             $txt
         );
-        $msg = '%s<div class="debug-hook">%s</div>%s';
+        $msg = '%s<div class="debug debug-hook">%s</div>%s';
         if (!self::$post && $logbrow) {
             if ($curlog >= $level) {
                 printf(
@@ -137,9 +137,12 @@ abstract class Event extends FOGBase
         }
         if ($logfile) {
             $log = sprintf(
-                '%s/lib/%s/%s.log',
+                '%s%slib%s%s%s%s.log',
                 BASEPATH,
+                DS,
+                DS,
                 $typePath,
+                DS,
                 get_class($obj)
             );
             $logtxt = sprintf(

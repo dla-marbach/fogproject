@@ -428,7 +428,7 @@ class PluginManagementPage extends FOGPage
                             $shutOpts
                         ),
                         '&nbsp;' => sprintf(
-                            '<input style="margin-top: 7px;" type="submit" '
+                            '<input type="submit" '
                             . 'name="basics" value="%s"/>',
                             _('Update Settings')
                         ),
@@ -456,7 +456,7 @@ class PluginManagementPage extends FOGPage
                             _('DMI Result')
                         ) => '<input type="text" name="key"/>',
                         '&nbsp;' => sprintf(
-                            '<input type="submit" style="margin-top: 7px;" '
+                            '<input type="submit" '
                             . 'name="addass" value="%s"/>',
                             _('Add Association')
                         ),
@@ -475,14 +475,15 @@ class PluginManagementPage extends FOGPage
                     );
                     $this->headerData = array(
                         '<input type="checkbox" id="checkAll" '
-                        . 'name="toggle-checkbox"/>',
+                        . 'name="toggle-checkbox"/><label for="checkAll"></label>',
                         _('Image Name'),
                         _('OS Name'),
                         _('DMI Key'),
                     );
                     $this->templates = array(
                         '<input type="checkbox" name="kill[]" value="${id}"'
-                        . '${class}/>',
+                        . '${class} id="kill-${id}"/>'
+                        . '<label for="kill-${id}"></label>',
                         '${image_name}',
                         '${os_name}',
                         '${capone_key}',

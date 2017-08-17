@@ -700,31 +700,33 @@ class Group extends FOGController
                 self::getClass('TaskManager')
                     ->insertBatch($batchFields, $batchTask);
             }
-        } elseif ($TaskType->isInitNeededTasking()) {
-            $hostIDs = $this->get('hosts');
-            $hostCount = count($hostIDs);
-            $batchFields = array(
-                'name',
-                'createdBy',
-                'hostID',
-                'stateID',
-                'typeID',
-                'wol',
-            );
-            $batchTask = array();
-            for ($i = 0; $i < $hostCount; ++$i) {
-                $batchTask[] = array(
-                    $taskName,
-                    $username,
-                    $hostIDs[$i],
-                    self::getQueuedState(),
-                    $TaskType->get('id'),
-                    $wol,
+        } else {
+            if ($TaskType->get('id') != 14) {
+                $hostIDs = $this->get('hosts');
+                $hostCount = count($hostIDs);
+                $batchFields = array(
+                    'name',
+                    'createdBy',
+                    'hostID',
+                    'stateID',
+                    'typeID',
+                    'wol',
                 );
-            }
-            if (count($batchTask) > 0) {
-                self::getClass('TaskManager')
-                    ->insertBatch($batchFields, $batchTask);
+                $batchTask = array();
+                for ($i = 0; $i < $hostCount; ++$i) {
+                    $batchTask[] = array(
+                        $taskName,
+                        $username,
+                        $hostIDs[$i],
+                        self::getQueuedState(),
+                        $TaskType->get('id'),
+                        $wol,
+                    );
+                }
+                if (count($batchTask) > 0) {
+                    self::getClass('TaskManager')
+                        ->insertBatch($batchFields, $batchTask);
+                }
             }
         }
         if ($wol) {

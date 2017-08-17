@@ -754,14 +754,7 @@ abstract class FOGPage extends FOGBase
                         $this->node
                     ),
                     sprintf(
-                        '%s %s',
-                        ucwords(
-                            (
-                                substr($this->node, -1) == 's' ?
-                                substr($this->node, 0, -1) :
-                                $this->node
-                            )
-                        ),
+                        '%s...',
                         self::$foglang['Search']
                     ),
                     (
@@ -801,9 +794,8 @@ abstract class FOGPage extends FOGBase
                 printf($this->form);
             }
             printf(
-                '<table width="%s" cellpadding="0" cellspacing="0" '
-                . 'border="0" id="%s">%s<tbody>',
-                '100%',
+                '<table cellpadding="0" cellspacing="0" '
+                . 'id="%s">%s<tbody>',
                 $contentField,
                 $this->buildHeaderRow()
             );
@@ -989,11 +981,7 @@ abstract class FOGPage extends FOGBase
                 $name
             );
             $val = trim($val);
-            $this->dataReplace[] = str_replace(
-                '\\',
-                '\\\\',
-                $val
-            );
+            $this->dataReplace[] = $val;
             unset($val);
         }
     }
@@ -2169,11 +2157,9 @@ abstract class FOGPage extends FOGBase
                 )
             )
         );
-        if ($this->obj->isValid()) {
-            $ADOU = trim($this->obj->get('ADOU'));
-            $ADOU = str_replace(';', '', $ADOU);
-            $optFound = $ADOU;
-        }
+        $ADOU = trim($ADOU);
+        $ADOU = str_replace(';', '', $ADOU);
+        $optFound = $ADOU;
         if (count($OUs) > 1) {
             ob_start();
             printf(
@@ -2221,13 +2207,14 @@ abstract class FOGPage extends FOGBase
             array(),
         );
         $fields = array(
-            '<input style="display:none" type="text" '
+            '<input type="text" '
             . 'name="fakeusernameremembered"/>' =>
-            '<input style="display:none" type="password" '
+            '<input type="password" '
             . 'name="fakepasswordremembered"/>',
             _('Join Domain after image task') =>
             sprintf(
-                '<input id="adEnabled" type="checkbox" name="domain"%s/>',
+                '<input id="adEnabled" type="checkbox" name="domain"%s/>'
+                . '<label for="adEnabled"></label>',
                 (
                     $useAD ?
                     ' checked' :
@@ -2278,8 +2265,9 @@ abstract class FOGPage extends FOGBase
                 _('AD changes even if users are logged in')
             ) =>
             sprintf(
-                '<input name="enforcesel" type="checkbox" '
-                . 'autocomplete="off"%s/><input type="hidden" '
+                '<input name="enforcesel" type="checkbox" id="'
+                . 'ensel" autocomplete="off"%s/><label for="ensel">'
+                . '</label><input type="hidden" '
                 . 'name="enforce"/>',
                 (
                     $enforce ?
@@ -2599,7 +2587,9 @@ abstract class FOGPage extends FOGBase
             ) =>
             (
                 $this->obj instanceof Group ?
-                '<input type="checkbox" name="massDelHosts" value="1" />' :
+                '<input type="checkbox" name="massDelHosts" value="1" id="'
+                . 'massDel"/>'
+                . '<label for="massDel"></label>' :
                 null
             ),
             (
@@ -2611,7 +2601,8 @@ abstract class FOGPage extends FOGBase
             (
                 $this->obj instanceof Image
                 || $this->obj instanceof Snapin ?
-                '<input type="checkbox" name="andFile" id="andFile" value="1"/>' :
+                '<input type="checkbox" name="andFile" id="andFile" value="1"/>'
+                . '<label for="andFile"></label>' :
                 null
             ),
             '&nbsp;' =>
@@ -3239,7 +3230,8 @@ abstract class FOGPage extends FOGBase
         $this->headerData = array(
             sprintf(
                 '<input type="checkbox" name="toggle-checkbox%s1" '
-                . 'class="toggle-checkbox1"/>',
+                . 'class="toggle-checkbox1" id="toggler"/>'
+                . '<label for="toggler"></label>',
                 $this->node
             ),
             sprintf(
@@ -3255,7 +3247,8 @@ abstract class FOGPage extends FOGBase
         $this->templates = array(
             sprintf(
                 '<input type="checkbox" name="host[]" value="${host_id}" '
-                . 'class="toggle-%s${check_num}"/>',
+                . 'class="toggle-%s${check_num}" id="host-${host_id}"/>'
+                . '<label for="host-${host_id}"></label>',
                 (
                     $objType ?
                     'group' :
@@ -3330,16 +3323,17 @@ abstract class FOGPage extends FOGBase
                 )
             );
             printf(
-                '<form method="post" action="%s"><label for="%sMeShow">'
+                '<form method="post" action="%s">'
                 . '<p class="c">%s %ss %s %s&nbsp;&nbsp;<input '
                 . 'type="checkbox" name="%sMeShow" id="%sMeShow"/>'
-                . '</p></label><div id="%sNotInMe"><h2>%s %s</h2>',
+                . '<label for="%sMeShow"></label></p>'
+                . '<div id="%sNotInMe"><h2>%s %s</h2>',
                 $this->formAction,
-                strtolower($ClassCall),
                 _('Check here to see'),
                 strtolower($ClassCall),
                 _('not within this'),
                 $this->node,
+                strtolower($ClassCall),
                 strtolower($ClassCall),
                 strtolower($ClassCall),
                 strtolower($ClassCall),
@@ -3362,7 +3356,8 @@ abstract class FOGPage extends FOGBase
         unset($this->data);
         $this->headerData = array(
             '<input type="checkbox" name="toggle-checkbox" '
-            . 'class="toggle-checkboxAction"/>',
+            . 'class="toggle-checkboxAction" id="toggler1"/>'
+            . '<label for="toggler1"></label>',
             sprintf(
                 '%s %s',
                 _($ClassCall),
@@ -3371,7 +3366,9 @@ abstract class FOGPage extends FOGBase
         );
         $this->templates = array(
             '<input type="checkbox" name="hostdel[]" '
-            . 'value="${host_id}" class="toggle-action"/>',
+            . 'value="${host_id}" class="toggle-action" id="'
+            . 'host1-${host_id}"/>'
+            . '<label for="host1-${host_id}"></label>',
             sprintf(
                 '<a href="?node=%s&sub=edit&id=${host_id}" '
                 . 'title="Edit: ${host_name}">${host_name}</a>',
@@ -3668,7 +3665,7 @@ abstract class FOGPage extends FOGBase
             $file = sprintf(
                 '%s%s%s',
                 $tmpf['dirname'],
-                DIRECTORY_SEPARATOR,
+                DS,
                 $tmpf['basename']
             );
             if (!file_exists($file)) {

@@ -427,15 +427,10 @@ class MulticastManager extends FOGService
                                 );
                                 continue;
                             }
-                            self::outall(
-                                sprintf(
-                                    " | %s (%s) %s %s.",
-                                    _('Task'),
-                                    $curTask->getID(),
-                                    $curTask->getName(),
-                                    _('has been cleaned')
-                                )
-                            );
+                            $curTask
+                                ->getSess()
+                                ->set('stateID', self::getProgressState())
+                                ->save();
                             self::outall(
                                 sprintf(
                                     " | %s (%s) %s %s.",

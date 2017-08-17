@@ -64,12 +64,11 @@ if (!self::$isMobile) {
         '<div class="fog-variable" id="screenview" value="%s"></div>',
         self::$defaultscreen
     );
-    self::getMessages();
     echo '<div id="loader-wrapper">';
     echo '<div id="loader"></div>';
+    self::getMessages();
     echo '<div id="progress"></div>';
     echo '</div>';
-    echo '<div id="wrapper">';
     echo '<header>';
     printf(
         '<div id="header"%s>',
@@ -86,15 +85,14 @@ if (!self::$isMobile) {
         self::$scriptname
     );
     printf(
-        '<img src="%s/fog-logo.png" alt="%s" title="%s"/>',
-        $this->imagelink,
+        '<img src="../favicon.ico" alt="%s" title="%s" class="logoimg"/>',
         self::$foglang['Home'],
         self::$foglang['Home']
     );
     echo '</a>';
     echo '</h1>';
     printf(
-        '<h2>%s</h2>',
+        '<h5>%s</h5>',
         self::$foglang['Slogan']
     );
     echo '<div id="version">';
@@ -108,13 +106,17 @@ if (!self::$isMobile) {
     );
     echo '</div>';
     echo '</div>';
-    if (self::$FOGUser) {
+    if (self::$FOGUser->isValid()) {
         echo $this->menu;
+    }
+    echo '</div></header><hr/>';
+    echo '<div id="wrapper">';
+    if (self::$FOGUser->isValid()) {
         if (!$this->isHomepage) {
             echo self::$FOGPageManager->getSideMenu();
         }
     }
-    echo '</div></header>';
+    echo '<div class="clear"></div>';
     printf(
         '<div id="content"%s>',
         (

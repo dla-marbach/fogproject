@@ -90,48 +90,48 @@ $(function() {
         return false;
     });
     // Assign DOM elements
-    if (typeof($("#pigz").slider) == typeof(Function)) {
-        $("#pigz").slider({
+    if (typeof($(".pigz").slider) == typeof(Function)) {
+        $(".pigz").slider({
             min: 0,
             max: 22,
             range: 'min',
-            value: $("#showVal").val(),
+            value: $(".showVal.pigz").val(),
             slide: function(event, ui) {
-                $("#showVal").val(ui.value);
+                $(".showVal.pigz").val(ui.value);
             }
         });
     }
-    if (typeof($("#loglvl").slider) == typeof(Function)) {
-        $("#loglvl").slider({
+    if (typeof($(".loglvl").slider) == typeof(Function)) {
+        $(".loglvl").slider({
             min: 0,
             max: 7,
             range: 'min',
-            value: $("#showlogVal").val(),
+            value: $(".showVal.loglvl").val(),
             slide: function(event, ui) {
-                $("#showlogVal").val(ui.value);
+                $(".showVal.loglvl").val(ui.value);
             }
         });
     }
-    if (typeof($("#inact").slider) == typeof(Function)) {
-        $("#inact").slider({
+    if (typeof($(".inact").slider) == typeof(Function)) {
+        $(".inact").slider({
             min: 1,
             max: 24,
             range: 'min',
-            value: $("#showValInAct").val(),
+            value: $(".showVal.inact").val(),
             slide: function(event, ui) {
-                $("#showValInAct").val(ui.value);
+                $(".showVal.inact").val(ui.value);
             }
         });
     }
-    if (typeof($("#regen").slider) == typeof(Function)) {
-        $("#regen").slider({
+    if (typeof($(".regen").slider) == typeof(Function)) {
+        $(".regen").slider({
             step: 0.25,
             min: 0.25,
             max: 24,
             range: 'min',
-            value: $("#showValRegen").val(),
+            value: $(".showVal.regen").val(),
             slide: function(event, ui) {
-                $("#showValRegen").val(ui.value);
+                $(".showVal.regen").val(ui.value);
             }
         });
     }
@@ -262,7 +262,7 @@ function DeployStuff() {
         });
         if (this.checked) {
             $('#scheduleInstant').prop('checked',true);
-            $('.hidden').not(':hidden').hide();
+            $('.hidden').parent().is(':visible').not(':hidden').hide();
         }
         e.preventDefault();
     });
@@ -405,13 +405,15 @@ function checkMonthField(month) {
     return checkField(month,1,12);
 }
 function checkDOWField(DOW) {
-    return checkField(DOW,0,6);
+    return checkField(DOW,0,7);
 }
 function checkboxAssociations(selector,checkselectors) {
     $(selector).change(function(e) {
         allchecked = this.checked;
-        $(checkselectors).not(':hidden').each(function() {
-            if (this.checked !== allchecked) this.checked = allchecked;
+        $(checkselectors).each(function() {
+            if ($(this).parent().is(':visible')) {
+                if (this.checked !== allchecked) this.checked = allchecked;
+            }
         });
         e.preventDefault();
     });

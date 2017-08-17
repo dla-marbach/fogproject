@@ -118,7 +118,6 @@ class AddSiteUser extends Hook
             }
             unset($str);
         }
-
     }
     /**
      * This function modifies the data of the user page.
@@ -258,7 +257,8 @@ class AddSiteUser extends Hook
             $arguments['fields'],
             _('Is Restricted User '),
             sprintf(
-                '<input type="checkbox" name="isRestricted"%s/>',
+                '<input type="checkbox" name="isRestricted" id="isRestricted"%s/>'
+                . '<label for="isRestricted"></label>',
                 (
                     $isRestricted ?
                     ' checked' :

@@ -180,9 +180,8 @@ class Route extends FOGBase
          */
         if (!self::$_enabled) {
             header(
-                'Location: ',
                 sprintf(
-                    '%s://%s/fog/management/index.php',
+                    'Location: %s://%s/fog/management/index.php',
                     self::$httpproto,
                     self::$httphost
                 )
@@ -283,7 +282,7 @@ class Route extends FOGBase
                 'search'
             )
             ->get(
-                "${expanded}",
+                "${expanded}/[list|all]?",
                 array(self, 'listem'),
                 'list'
             )
@@ -293,7 +292,7 @@ class Route extends FOGBase
                 'indiv'
             )
             ->put(
-                "${expanded}/[i:id]/[update|edit]",
+                "${expanded}/[i:id]/[update|edit]?",
                 array(self, 'edit'),
                 'update'
             )
@@ -303,7 +302,7 @@ class Route extends FOGBase
                 'task'
             )
             ->post(
-                "${expanded}/[create|new]",
+                "${expanded}/[create|new]?",
                 array(self, 'create'),
                 'create'
             )
@@ -313,7 +312,7 @@ class Route extends FOGBase
                 'cancel'
             )
             ->delete(
-                "${expanded}/[i:id]/[delete|remove]",
+                "${expanded}/[i:id]/[delete|remove]?",
                 array(self, 'delete'),
                 'delete'
             );
@@ -933,7 +932,7 @@ class Route extends FOGBase
      * Get's the json body and sets our vars.
      *
      * @param string $class The class to get vars for/from.
-     * 
+     *
      * @return array
      */
     public static function getsearchbody($class)

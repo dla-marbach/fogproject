@@ -646,7 +646,7 @@ abstract class FOGBase
             get_class($this),
             $data
         );
-        printf('<div class="debug-error">%s</div>', $string);
+        printf('<div class="debug debug-error">%s</div>', $string);
     }
     /**
      * Prints error.
@@ -667,7 +667,7 @@ abstract class FOGBase
             get_class($this),
             $data
         );
-        printf('<div class="debug-error">%s</div>', $string);
+        printf('<div class="debug debug-error">%s</div>', $string);
     }
     /**
      * Prints debug.
@@ -688,7 +688,7 @@ abstract class FOGBase
             get_class($this),
             $data
         );
-        printf('<div class="debug-error">%s</div>', $string);
+        printf('<div class="debug debug-error">%s</div>', $string);
     }
     /**
      * Prints info.
@@ -709,7 +709,7 @@ abstract class FOGBase
             get_class($this),
             $data
         );
-        printf('<div class="debug-info">%s</div>', $string);
+        printf('<div class="debug debug-info">%s</div>', $string);
     }
     /**
      * Sets message banner at top of pages.
@@ -1535,12 +1535,12 @@ abstract class FOGBase
             str_replace(
                 array('\\', '/'),
                 array(
-                    DIRECTORY_SEPARATOR,
-                    DIRECTORY_SEPARATOR
+                    DS,
+                    DS
                 ),
                 $tmpssl[0]
             ),
-            DIRECTORY_SEPARATOR
+            DS
         );
         unset($tmpssl);
         if (!file_exists($sslfile)) {
@@ -1718,6 +1718,11 @@ abstract class FOGBase
             return;
         }
         try {
+            if (!($this->Host instanceof Host)) {
+                throw new Exception($this->Host);
+            } else if (!($this->Host->isValid())) {
+                throw new Exception('#!ih');
+            }
             $datatosend = trim($datatosend);
             $curdate = self::niceDate();
             $secdate = self::niceDate($this->Host->get('sec_time'));

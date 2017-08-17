@@ -96,7 +96,7 @@ class SchemaUpdaterPage extends FOGPage
             . '<p class="c"><input type="hidden" '
             . 'name="fogverified"/><input type="submit" '
             . 'name="confirm" value="%s"/></p></form>'
-            . '<p>%s</p><div id="sidenotes">'
+            . '<p>%s</p><div class="sidenotes">'
             . '<pre><code>cd%smysqldump --allow-keywords '
             . '-x -v fog > fogbackup.sql</code></pre></div>'
             . '<br/></div>',
@@ -110,8 +110,8 @@ class SchemaUpdaterPage extends FOGPage
             _('There are many reasons why this could be the case'),
             _('Please check your credentials in'),
             dirname(dirname(__FILE__)),
-            DIRECTORY_SEPARATOR,
-            'fog/config.class.php',
+            DS,
+            'fog' . DS . 'config.class.php',
             _('Also confirm that the database is indeed running'),
             _('If credentials are correct'),
             _('and if the Database service is running'),
@@ -135,8 +135,8 @@ class SchemaUpdaterPage extends FOGPage
         include sprintf(
             '%s%scommons%sschema.php',
             BASEPATH,
-            DIRECTORY_SEPARATOR,
-            DIRECTORY_SEPARATOR
+            DS,
+            DS
         );
         $errors = array();
         try {

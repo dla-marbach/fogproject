@@ -133,7 +133,7 @@ class FOGPageManager extends FOGBase
         }
         if (!is_object($class->obj)) {
             return sprintf(
-                '<div id="sidebar">%s</div>',
+                '<div class="sidebar">%s</div>',
                 self::$FOGSubMenu->get($this->classValue)
             );
         }
@@ -158,7 +158,7 @@ class FOGPageManager extends FOGBase
             unset($title, $link);
         }
         return sprintf(
-            '<div id="sidebar">%s</div>',
+            '<div class="sidebar">%s</div>',
             self::$FOGSubMenu->get($this->classValue)
         );
     }
@@ -304,13 +304,25 @@ class FOGPageManager extends FOGBase
     private function _loadPageClasses()
     {
         global $node;
-        $regext = '#^.+/pages/.*\.class\.php$#';
-        $dirpath = '/pages/';
+        $regext = sprintf(
+            '#^.+%spages%s.*\.class\.php$#',
+            DS,
+            DS
+        );
+        $dirpath = sprintf(
+            '%spages%s',
+            DS,
+            DS
+        );
         $strlen = -strlen('.class.php');
         $plugins = '';
         $fileitems = function ($element) use ($dirpath, &$plugins) {
             preg_match(
-                "#^($plugins.+/plugins/)(?=.*$dirpath).*$#",
+                sprintf(
+                    "#^($plugins.+%splugins%s)(?=.*$dirpath).*$#",
+                    DS,
+                    DS
+                ),
                 $element[0],
                 $match
             );
@@ -348,8 +360,10 @@ class FOGPageManager extends FOGBase
             array_filter(
                 preg_grep(
                     sprintf(
-                        '#/(%s)/#',
-                        implode('|', self::$pluginsinstalled)
+                        '#%s(%s)%s#',
+                        DS,
+                        implode('|', self::$pluginsinstalled),
+                        DS
                     ),
                     array_map(
                         $fileitems,

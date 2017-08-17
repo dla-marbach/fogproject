@@ -78,10 +78,10 @@ class AddHostModel extends Hook
         if ($node != 'host') {
             return;
         }
-        $arguments['templates'][5] = '${model}';
-        $arguments['attributes'][5] = array(
-            'widht' => 20,
-            'class' => 'c'
+        $arguments['templates'][] = '${model}';
+        $arguments['attributes'][] = array(
+            'class' => 'c',
+            'width' => '20',
         );
         $items = $arguments['data'];
         $hostnames = array();
@@ -115,6 +115,6 @@ class AddHostModel extends Hook
         if ($node != 'host') {
             return;
         }
-        $arguments['headerData'][5] = _('Model');
+        $arguments['headerData'][] = _('Model');
     }
 }

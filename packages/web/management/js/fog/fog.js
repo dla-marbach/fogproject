@@ -39,10 +39,10 @@ _L['ACTIVE_TASKS_FOUND'] = '%1 active task%2 found';
 _L['ACTIVE_TASKS_LOADING'] = 'Loading...';
 function getChecked() {
     var val = [];
-    $('.toggle-action:checkbox:checked')
-    .not(':hidden')
-    .each(function(i) {
-        val[i] = this.value;
+    $('.toggle-action:checkbox:checked').each(function(i) {
+        if ($(this).parent().is(':visible')) {
+            val[i] = this.value;
+        }
     });
     return val;
 }
@@ -63,9 +63,11 @@ function setEditFocus() {
     });
 }
 function setChecked(ids) {
-    $('.toggle-action:checkbox').not(':hidden').not(':checked').each(function(i) {
-        if ($.inArray(this.value,ids) < 0) return;
-        this.checked = true;
+    $('.toggle-action:checkbox').not(':checked').each(function(i) {
+        if ($(this).parent().is(':visible')) {
+            if ($.inArray(this.value,ids) < 0) return;
+            this.checked = true;
+        }
     });
 }
 function getQueryParams(qs) {
@@ -127,7 +129,6 @@ function AJAXServerTime() {
                     .addClass('loading')
             },
             success: function(response) {
-                history.pushState(null, null, url);
                 if (response === null || response.data === null) {
                     dataLength = 0;
                 } else {
@@ -144,7 +145,7 @@ function AJAXServerTime() {
                             )
                     .find('i')
                     .removeClass()
-                    .addClass('fa fa-exclamation-circle');
+                    .addClass('fa fa-exclamation-circle fa-1x fa-fw');
                 if (dataLength > 0) {
                     buildHeaderRow(response.headerData, response.attributes, 'th');
                     thead = $('thead', Container);
@@ -156,9 +157,6 @@ function AJAXServerTime() {
             }
         });
     });
-    if ($.inArray(sub,['list','listhosts','listgroups','storageGroup']) > -1) {
-        $('.'+sub).trigger('click');
-    }
     /**
      * On any form submission, attempt to trim the input fields automatically.
      */
@@ -168,7 +166,7 @@ function AJAXServerTime() {
     $('form').children().each(function() {
         this.value=$(this).val().trim();
     });
-    if (screenview == 'list') {
+    if ($.inArray(sub,['list','listhosts','listgroups','storageGroup']) < 0 && screenview == 'list') {
         $('.list').trigger('click');
     }
 })(jQuery);
@@ -215,7 +213,10 @@ $.fn.fogAjaxSearch = function(opts) {
     Container = $(Options.Container);
     if (!Container.length) return this;
     callme = 'hide';
-    if ($('tbody > tr',Container).filter('.no-active-tasks').length > 0) callme = 'show';
+    if ($('tbody > tr', Container).filter('.no-active-tasks').length > 0
+        || $.inArray(sub,['list','listhosts','listgroups','storageGroup']) > -1) {
+        callme = 'show';
+    }
     Container[callme]().fogTableInfo().trigger('updateAll');
     ActionBox[callme]();
     ActionBoxDel[callme]();
@@ -272,7 +273,7 @@ $.fn.fogAjaxSearch = function(opts) {
                     thead = $('thead',Container);
                     tbody = $('tbody',Container);
                     LastCount = dataLength;
-                    Loader.removeClass('loading').fogStatusUpdate(_L['SEARCH_RESULTS_FOUND'].replace(/%1/,LastCount).replace(/%2/,LastCount != 1 ? 's' : '')).find('i').removeClass().addClass('fa fa-exclamation-circle');
+                    Loader.removeClass('loading').fogStatusUpdate(_L['SEARCH_RESULTS_FOUND'].replace(/%1/,LastCount).replace(/%2/,LastCount != 1 ? 's' : '')).find('i').removeClass().addClass('fa fa-exclamation-circle fa-1x fa-fw');
                     if (dataLength > 0) {
                         buildHeaderRow(response.headerData,response.attributes,'th');
                         thead = $('thead',Container);
@@ -320,7 +321,7 @@ $.fn.fogStatusUpdate = function(txt, opts) {
     if (!txt) {
         p.remove().end().hide();
     } else {
-        i.addClass('fa fa-exclamation-circle fw');
+        i.addClass('fa fa-exclamation-circle fa-1x fa-fw');
         p.remove().end().append((Options.Raw ? txt : '<p>'+txt+'</p>')).show();
     }
     Loader.removeClass();
@@ -549,7 +550,6 @@ function setupFogTableInfoFunction() {
                 }
                 break;
             case 'report':
-                console.log(sub);
                 if (typeof(sub) != 'undefined') {
                     switch (sub) {
                         case 'inventory':

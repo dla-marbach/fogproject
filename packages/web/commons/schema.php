@@ -448,7 +448,7 @@ $this->schema[] = array(
     . "','Web Server'),"
     . "('FOG_WEB_ROOT','This setting defines the path to the "
     . "fog webserver\'s root directory.','"
-    . WEB_ROOT
+    . '/fog/'
     . "','Web Server'),"
     . "('FOG_WOL_HOST','This setting defines the ip address "
     . "of hostname for the server hosting the Wake-on-lan service.','"
@@ -1792,7 +1792,12 @@ $this->schema[] = array(
     . "WHERE `settingKey`='FOG_TFTP_PXE_KERNEL'",
     "UPDATE `globalSettings` set `settingValue` = '"
     . BASEPATH
-    . "/service/ipxe/' WHERE settingKey = 'FOG_TFTP_PXE_KERNEL_DIR'",
+    . DS
+    . "service"
+    . DS
+    . "ipxe"
+    . DS
+    . "' WHERE settingKey = 'FOG_TFTP_PXE_KERNEL_DIR'",
     "UPDATE `globalSettings` set `settingValue`='init.xz' "
     . "WHERE `settingKey`='FOG_PXE_BOOT_IMAGE'",
     "UPDATE `globalSettings` set `settingValue`='memtest.bin' "

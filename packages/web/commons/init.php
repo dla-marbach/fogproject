@@ -63,15 +63,10 @@ class Initiator
                 );
             }
             if (is_array($val)) {
-                foreach ((array)$val as $k => &$v) {
-                    $val[$k] = htmlspecialchars(
-                        $v,
-                        ENT_QUOTES | ENT_HTML401,
-                        'utf-8'
-                    );
-                    unset($v);
-                }
+                array_walk($val, self::$_sanitizeItems);
             }
+            unset($val, $key);
+            return $value;
         };
         /**
          * Find out if the link has service in the call.
@@ -91,6 +86,7 @@ class Initiator
         /**
          * Define our base path (/var/www/, /var/www/html/, etc...)
          */
+        define('DS', addslashes(DIRECTORY_SEPARATOR));
         define('BASEPATH', self::_determineBasePath());
         /**
          * Regex pattern to search for files of type.
@@ -238,53 +234,11 @@ class Initiator
      */
     private static function _determineBasePath()
     {
-        /**
-         * Gets our script name and path.
-         */
-        $script_name = filter_input(INPUT_SERVER, 'SCRIPT_NAME');
-        /**
-         * Stores our matching if fog is in the name variable
-         */
-        $match = false !== stripos($script_name, '/fog/');
-        if ($match) {
-            $match = 'fog/';
-        } else {
-            $match = '';
-        }
-        /**
-         * Defines our webroot path.
-         */
-        define(
-            'WEB_ROOT',
-            sprintf(
-                '/%s',
-                $match
-            )
+        return sprintf(
+            '%s%s',
+            dirname(__DIR__),
+            DS
         );
-        /**
-         * Check for /srv/http/fog, /var/www/html/fog, or /var/www/fog.
-         * Otherwise use the document root as defined by the server.
-         */
-        if (file_exists('/srv/http/fog')) {
-            $path = '/srv/http/fog';
-        } elseif (file_exists('/var/www/html/fog')) {
-            $path = '/var/www/html/fog';
-        } elseif (file_exists('/var/www/fog')) {
-            $path = '/var/www/fog';
-        } else {
-            $docroot = trim(
-                filter_input(INPUT_SERVER, 'DOCUMENT_ROOT'),
-                '/'
-            );
-            $path = sprintf(
-                '/%s',
-                sprintf(
-                    '/%s',
-                    WEB_ROOT
-                )
-            );
-        }
-        return $path;
     }
     /**
      * Initiates the environment
@@ -362,21 +316,14 @@ class Initiator
          * Otherwise it will clean the passed value.
          */
         if (!count($value)) {
-            if (session_status() != PHP_SESSION_NONE) {
-                array_walk($_SESSION, self::$_sanitizeItems);
-            }
-            if (count($_REQUEST) > 0) {
-                array_walk($_REQUEST, self::$_sanitizeItems);
-            }
-            if (count($_COOKIE) > 0) {
-                array_walk($_COOKIE, self::$_sanitizeItems);
-            }
-            if (count($_POST) > 0) {
-                array_walk($_POST, self::$_sanitizeItems);
-            }
-            if (count($_GET) > 0) {
-                array_walk($_GET, self::$_sanitizeItems);
-            }
+            $process = array(
+                &$_GET,
+                &$_POST,
+                &$_COOKIE,
+                &$_REQUEST,
+                &$_SESSION
+            );
+            array_walk($process, self::$_sanitizeItems);
         } else {
             if (is_array($value)) {
                 array_walk($value, self::$_sanitizeItems);
